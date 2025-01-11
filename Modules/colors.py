@@ -15,3 +15,7 @@ class Colors():
         self.orange = (255, 128, 0)
         self.purple = (255, 0, 255)
         self.cyan = (0, 255, 255)
+
+        self.all_colors = [self.red, self.green, self.blue, self.yellow, 
+                           self.orange, self.purple, self.cyan]
+        
