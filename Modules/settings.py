@@ -1,12 +1,12 @@
 #global settings
-from colors import Colors
+from Modules.colors import Colors
 from pygame.locals import *
 
 
 class Settings():
     """Settings for the matching game."""
 
-    def __init__(self, matching_game, logger):
+    def __init__(self, mg):
         """Settings attributes."""
         self.colors = Colors(self)
 

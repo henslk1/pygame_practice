@@ -3,7 +3,7 @@
 class Colors():
     "Defining the color used in other modules."
 
-    def __init__(self):
+    def __init__(self, mg):
         """Color Attributes."""
         self.gray = (100, 100, 100)
         self.navy_blue = (60, 60, 100)

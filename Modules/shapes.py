@@ -3,7 +3,7 @@
 class Shapes():
     """Define shapes."""
 
-    def __init__(self):
+    def __init__(self, mg):
         """Initiate shape attributes."""
         self.donut = 'donut'
         self.square = 'square'

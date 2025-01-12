@@ -1,13 +1,13 @@
 #board functions
-from settings import Settings
-from shapes import Shapes
-from colors import Colors
+from Modules.settings import Settings
+from Modules.shapes import Shapes
+from Modules.colors import Colors
 import random
 
 class Board():
     """Represents the board."""
 
-    def __init__(self):
+    def __init__(self, mg):
         """Initiate attributes."""
 
         self.settings = Settings(self)
@@ -52,14 +52,14 @@ class Board():
     def _create_board_data_structure(self, icons):
         """Create board structure with randomly placed icons."""
 
-        self.board = []
+        self.new_board = []
         for x in range(self.settings.board_width):
             self.column = []
             for y in range(self.settings.board_height):
                 self.column.append(icons[0])
                 del icons[0] #remove icons as they're assigned
             
-            self.board.append(self.column)
+            self.new_board.append(self.column)
         
-        return self.board
+        return self.new_board
     
