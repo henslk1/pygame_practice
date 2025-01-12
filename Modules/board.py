@@ -4,6 +4,7 @@ from Modules.shapes import Shapes
 from Modules.colors import Colors
 import random
 
+
 class Board():
     """Represents the board."""
 
@@ -29,7 +30,8 @@ class Board():
     def get_randomized_board(self):
         
         self._generate_icons()
-        self._create_board_data_structure(self.icons)
+
+        return self._create_board_data_structure(self.icons)
 
 
     def _generate_icons(self):
@@ -38,7 +40,9 @@ class Board():
         self.icons = []
 
         for color in self.colors.all_colors:
+
             for shape in self.shapes.all_shapes:
+
                 self.icons.append( (shape, color) )
 
         random.shuffle(self.icons) # randomize the order of the icons
@@ -54,8 +58,11 @@ class Board():
 
         self.new_board = []
         for x in range(self.settings.board_width):
+
             self.column = []
+            
             for y in range(self.settings.board_height):
+
                 self.column.append(icons[0])
                 del icons[0] #remove icons as they're assigned
             

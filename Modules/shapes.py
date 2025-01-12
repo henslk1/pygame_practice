@@ -12,3 +12,4 @@ class Shapes():
         self.oval = 'oval'
 
         self.all_shapes = (self.donut, self.square, self.diamond, self.lines, self.oval)
+        

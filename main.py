@@ -5,6 +5,7 @@ from Modules.colors import Colors
 from Modules.settings import Settings
 from Modules.shapes import Shapes
 
+
 class MatchingGame():
 	"""Main game operations."""
 
@@ -33,6 +34,7 @@ class MatchingGame():
 		self.display_surf.fill(self.settings.bg_color)
 		self._start_game_animation(self.main_board)
 
+
 	def run_game(self):
 		"""Start the main loop for the game."""
         
@@ -46,20 +48,25 @@ class MatchingGame():
 			self._check_events()
 			self._check_selection()
 
+
 	def _check_events(self):
 		"""Check for events"""
 
 		for event in pygame.event.get(): #event handling loop
+
 			if event.type == QUIT or (event.type == KEYUP and event.type == K_ESCAPE):
 				pygame.quit()
 				sys.exit()
 			
 			elif event.type == MOUSEMOTION:
+
 				self.mousex, self.mousey = event.pos
 
 			elif event.type == MOUSEBUTTONUP:
+
 				self.mousex, self.mousey = event.pos
 				self.mouse_clicked = True
+				
 
 	def _check_selection(self):
 		"""Respond to mouse hover and clicks."""
@@ -70,51 +77,23 @@ class MatchingGame():
 
 			#The mouse is currently over a box
 			if not self.revealed_boxes[self.boxx][self.boxy]:
+
 				self._draw_highlight_box(self.boxx,self.boxy)
 
 			if not self.revealed_boxes[self.boxx][self.boxy] and self.mouse_clicked:
+
 				self._reveal_boxes_animation(self.main_board, [(self.boxx, self.boxy)])
+
 				# Set the box as revealed
 				self.revealed_boxes[self.boxx][self.boxy] = True
 
 				if self.first_selection == None: # Current box is the first one clicked
-					self.first_selection == (self.boxx, self.boxy)
+
+					self.first_selection = (self.boxx, self.boxy)
 
 				else: #the current box is the second box
-					  #check if there was a match between the two icons
-					self.icon1_shape, self.icon1_color = self.get_shape_and_color(
-						self.main_board, self.first_selection[0], self.first_selection[1])
-					
-					self.icon2_shape, self.icon2_color = self.get_shape_and_color(
-						self.main_board, self.boxx, self.boxy)
-					
-					if self.icon1_shape != self.icon2_shape or self.icon1_color != self.icon2_color:
-						#Icons don't match
-						pygame.time.wait(1000) #1 second
-						self.cover_boxes_animation(self.main_board, [(
-							self.first_selection[0], self.first_selection[1]), 
-							(self.boxx, self.boxy)])
-						
-						self.revealed_boxes[self.first_selection[0]][self.first_selection[1]] = False
-						self.revealed_boxes[self.boxx][self.boxy] = False
-					
-					#Check if all pairs found
-					elif self._has_won(self.revealed_boxes):
 
-						self._game_won_animation(self.main_board)
-						pygame.time.wait(2000) #2 seconds
-
-						#Reset the board
-						self.main_board = self.board.get_randomized_board()
-						self.revealed_boxes = self._generate_revealed_boxes_data(False)
-
-						#Show the fully revealed board for a second.
-						self._draw_board(self.main_board, self.revealed_boxes)
-						pygame.display.update()
-						pygame.time.wait(1000)
-
-						#Replay the start animation
-						self._start_game_animation(self.main_board)
+					self._check_matches()
 					
 					self.first_selection = None #reset first selection
 
@@ -122,9 +101,32 @@ class MatchingGame():
 		self.fps_clock.tick(self.settings.fps)
 
 
-	
+	def _check_matches(self):
+		"""check if there was a match between the two icons"""
 
-	
+		self.icon1_shape, self.icon1_color = self._get_shape_and_color(
+			self.main_board, self.first_selection[0], self.first_selection[1])
+
+		self.icon2_shape, self.icon2_color = self._get_shape_and_color(
+			self.main_board, self.boxx, self.boxy)
+		
+		if self.icon1_shape != self.icon2_shape or self.icon1_color != self.icon2_color:
+			#Icons don't match
+			
+			pygame.time.wait(1000) #1 second
+			self._cover_boxes_animation(self.main_board, [(
+				self.first_selection[0], self.first_selection[1]), 
+				(self.boxx, self.boxy)])
+			
+			self.revealed_boxes[self.first_selection[0]][self.first_selection[1]] = False
+			self.revealed_boxes[self.boxx][self.boxy] = False
+
+			#Check if all pairs found
+		elif self._has_won(self.revealed_boxes):
+
+			self._reset_game()
+
+
 	def _generate_revealed_boxes(self, val):
 		"""Generate revealed boxes"""
 
@@ -138,6 +140,7 @@ class MatchingGame():
 
 	def _split_into_groups_of(self, group_size, the_list):
 		"""splits a list into a list of lists"""
+
 		result = []
 
 		for i in range(0, len(the_list), group_size):
@@ -159,11 +162,15 @@ class MatchingGame():
 		"""Return pixel coords"""
 
 		for boxx in range(self.settings.board_width):
+
 			for boxy in range(self.settings.board_height):
+
 				self.left, self.top = self._left_top_coords_of_box(boxx, boxy)
 				self.box_rect = pygame.Rect(self.left, self.top, 
 								self.settings.box_size, self.settings.box_size)
+				
 				if self.box_rect.collidepoint(x, y):
+
 					return(boxx, boxy)
 		
 		return (None, None)
@@ -179,7 +186,7 @@ class MatchingGame():
 		self.left, self.top = self._left_top_coords_of_box(boxx, boxy)
 
 		if shape == self.shapes.donut:
-			#draw donut
+
 			pygame.draw.circle(self.display_surf, color, (self.left + self.half, 
 												self.top + self.half),self.half - 5)
 		
@@ -187,21 +194,23 @@ class MatchingGame():
 					 (self.left + self.half, self.top + self.half),self.quarter - 5)
 			
 		elif shape == self.shapes.square:
-			#draw square
+
 			pygame.draw.rect(self.display_surf, color, (self.left + self.quarter, 
 											   self.top + self.quarter, 
-											   self.settngs.box_size - self.half, 
-											   self.settngs.box_size - self.half))
+											   self.settings.box_size - self.half, 
+											   self.settings.box_size - self.half))
 
 		elif shape == self.shapes.diamond:
+
 			pygame.draw.polygon(self.display_surf, color, 
 				((self.left + self.half, self.top), 
-				(self.left + self.settngs.box_size - 1, self.top + self.half), 
-				(self.left + self.half, self.top + self.settngs.box_size - 1), 
+				(self.left + self.settings.box_size - 1, self.top + self.half), 
+				(self.left + self.half, self.top + self.settings.box_size - 1), 
 				(self.left, self.top + self.half)))
 
 		elif shape == self.shapes.lines:
-			for i in range(0, self.settngs.box_size, 4):
+
+			for i in range(0, self.settings.box_size, 4):
 
 				pygame.draw.line(self.display_surf, color, (self.left, self.top + i), 
 					 (self.left + i, self.top))
@@ -210,6 +219,7 @@ class MatchingGame():
 					 (self.left + self.settings.box_size - 1, self.top + i))
 
 		elif shape == self.shapes.oval:
+
 			pygame.draw.ellipse(self.display_surf, color, 
 						(self.left, self.top + self.quarter, 
 	   					self.settings.box_size, self.half))
@@ -217,8 +227,10 @@ class MatchingGame():
 	
 	def _get_shape_and_color(self, board, boxx, boxy):
 		"""Get shape and color of the icons."""
+
 		#shape value for x,y is board[x][y][0]
 		#color value for x,y is board[x][y][1]
+
 		return board[boxx][boxy][0], board[boxx][boxy][1]
 	
 
@@ -229,6 +241,7 @@ class MatchingGame():
 		"""
 
 		for box in boxes:
+
 			left, top = self._left_top_coords_of_box(box[0], box[1])
 
 			pygame.draw.rect(self.display_surf, self.settings.bg_color,
@@ -238,8 +251,9 @@ class MatchingGame():
 			self._draw_icon(shape, color, box[0], box[1])
 
 			if coverage > 0: #only draw the cover if there is an coverage
-				pygame.rect(self.display_surf, self.settings.box_color,
-				(left, top, coverage, self.settings.box_size))
+
+				pygame.draw.rect(self.display_surf, self.settings.box_color, 
+					 (left, top, coverage, self.settings.box_size))
 			
 		pygame.display.update()
 		self.fps_clock.tick(self.settings.fps)
@@ -249,7 +263,8 @@ class MatchingGame():
 		"""Box reveal animation"""
 
 		for coverage in range(self.settings.box_size, (-self.settings.reveal_speed) - 1,
-												 self.settings.reveal_speed):
+												 -self.settings.reveal_speed):
+			
 			self._draw_box_covers(board, boxes_to_reveal, coverage)
 
 
@@ -258,6 +273,7 @@ class MatchingGame():
 
 		for coverage in range(0, self.settings.box_size + self.settings.reveal_speed,
 						self.settings.reveal_speed):
+			
 			self._draw_box_covers(board, boxes_to_cover, coverage)
 
 
@@ -265,15 +281,19 @@ class MatchingGame():
 		"""Draws all the boxes or revealed state."""
 
 		for boxx in range(self.settings.board_width):
+
 			for boxy in range(self.settings.board_height):
+
 				left, top = self._left_top_coords_of_box(boxx, boxy)
 
 				if not revealed[boxx][boxy]:
+
 					#draw covered box
 					pygame.draw.rect(self.display_surf, self.settings.box_color,
 					  (left, top, self.settings.box_size, self.settings.box_size))
 					
 				else:
+
 					# Draw the revealed icon
 					shape, color = self._get_shape_and_color(board, boxx, boxy)
 					self._draw_icon(shape, color, boxx, boxy)
@@ -281,7 +301,9 @@ class MatchingGame():
 
 	def _draw_highlight_box(self, boxx, boxy):
 		"""change color on hover"""
+
 		left, top = self._left_top_coords_of_box(boxx, boxy)
+
 		pygame.draw.rect(self.display_surf, self.settings.highlight_color,
 				   (left - 5, top - 5, self.settings.box_size + 10,
 					self.settings.box_size + 10), 4)
@@ -295,7 +317,9 @@ class MatchingGame():
 		self.boxes = []
 
 		for x in range(self.settings.board_width):
+
 			for y in range(self.settings.board_height):
+
 				self.boxes.append( (x, y) )
 
 		random.shuffle(self.boxes)
@@ -304,11 +328,12 @@ class MatchingGame():
 		self._draw_board(board, self.covered_boxes)
 
 		for box_group in self.box_groups:
+
 			self._reveal_boxes_animation(board, box_group)
 			self._cover_boxes_animation(board, box_group)
 
 
-	def _games_won_animation(self, board):
+	def _game_won_animation(self, board):
 		"""flash the background player when a player has won"""
 
 		self.covered_boxes = self._generate_revealed_boxes(True)
@@ -316,6 +341,7 @@ class MatchingGame():
 		self.color2 = self.settings.bg_color
 
 		for i in range(13):
+
 			self.color1, self.color2 = self.color2, self.color1
 			self.display_surf.fill(self.color1)
 			self._draw_board(board, self.covered_boxes)
@@ -327,15 +353,33 @@ class MatchingGame():
 		"""Declare whether the player wins or not"""
 
 		for i in revealed_boxes:
+
 			if False in i:
+
 				return False #return false if any boxes are covered
 			
 		return True
+	
+	
+	def _reset_game(self):
+		"""Reset the game if player has won."""
+
+		self._game_won_animation(self.main_board)
+		pygame.time.wait(2000) #2 seconds
+
+		#Reset the board
+		self.main_board = self.board.get_randomized_board()
+		self.revealed_boxes = self._generate_revealed_boxes(False)
+
+		#Show the fully revealed board for a second.
+		self._draw_board(self.main_board, self.revealed_boxes)
+		pygame.display.update()
+		pygame.time.wait(1000)
+
+		#Replay the start animation
+		self._start_game_animation(self.main_board)
 	
 
 if __name__ == '__main__':
 	mg = MatchingGame()
 	mg.run_game()
-
-
-
