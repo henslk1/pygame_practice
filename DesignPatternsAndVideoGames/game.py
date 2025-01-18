@@ -23,7 +23,7 @@ class GameState():
         
         if self.tank_pos.x < 0:
 
-            self.tank_pos = 0
+            self.tank_pos.x = 0
         
         elif self.tank_pos.x >= self.world_size.x:
 
