@@ -13,29 +13,20 @@ class GameState():
         """Initialize attributes"""
 
         self.world_size = Vector2(16,10)
-        self.tank_pos = Vector2(0,0)
+        self.tank_pos = Vector2(5,4)
+        self.tower1_pos = Vector2(10,3)
+        self.tower2_pos = Vector2(10,5)
 
 
     def update(self, move_tank_command):
         """Update coords"""
 
-        self.tank_pos += move_tank_command
+        new_tank_pos = self.tank_pos + move_tank_command
         
-        if self.tank_pos.x < 0:
-
-            self.tank_pos.x = 0
-        
-        elif self.tank_pos.x >= self.world_size.x:
-
-            self.tank_pos.x = self.world_size.x - 1
-
-        if self.tank_pos.y < 0:
-
-            self.tank_pos.y = 0
-
-        elif self.tank_pos.y >= self.world_size.y:
-            
-            self.tank_pos.y = self.world_size.y - 1
+        if new_tank_pos.x >= 0 and new_tank_pos.x < self.world_size.x \
+        and new_tank_pos.y >= 0 and new_tank_pos.y < self.world_size.y \
+        and new_tank_pos != self.tower1_pos and new_tank_pos != self.tower2_pos:
+            self.tank_pos = new_tank_pos
 
 
 class UserInterface():
@@ -109,11 +100,27 @@ class UserInterface():
 
         self.window.fill((0,0,0))
 
+        #tower 1
+        sprite_point = self.game_state.tower1_pos.elementwise() * self.cell_size
+        texture_point = Vector2(0,1).elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            int(self.cell_size.x), int(self.cell_size.y))
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
+        texture_point = Vector2(0,6).elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            int(self.cell_size.x), int(self.cell_size.y))
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
         #tank base
         sprite_point = self.game_state.tank_pos.elementwise() * self.cell_size
+
         texture_point = Vector2(1,0).elementwise() * self.cell_size
         texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
                             int(self.cell_size.x),int(self.cell_size.y))
+        
         self.window.blit(self.units_texture, sprite_point, texture_rect)
 
         pygame.display.update()
