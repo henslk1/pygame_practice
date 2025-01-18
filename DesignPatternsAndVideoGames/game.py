@@ -17,7 +17,7 @@ class UserInterface():
         self.game_state = GameState()
 
         self.cell_size = Vector2(64, 64)
-        self.units_texture = pygame.image.load("units.png")
+        self.units_texture = pygame.image.load("unit_assets.png")
 
         window_size = self.game_state.world_size.elementwise() * self.cell_size
         self.window = pygame.display.set_mode((int(window_size.x), int(window_size.y)))
