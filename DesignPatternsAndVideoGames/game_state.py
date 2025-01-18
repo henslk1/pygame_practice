@@ -28,10 +28,19 @@ class GameState():
 
         ]
 
+    @property
+    def world_width(self):
+
+        return int(self.world_size.x)
+    
+
+    @property
+    def world_height(self):
+
+        return int(self.world_size.y)
+
 
     def update(self, move_tank_command):
         """Update coords"""
 
-        for unit in self.units:
-
-            unit.move(move_tank_command)
+        self.units[0].move(move_tank_command)
