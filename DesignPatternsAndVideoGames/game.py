@@ -18,10 +18,11 @@ class UserInterface():
 
         self.cell_size = Vector2(64, 64)
         self.units_texture = pygame.image.load("unit_assets.png")
+        self.ground_texture = pygame.image.load("ground.png")
 
         window_size = self.game_state.world_size.elementwise() * self.cell_size
         self.window = pygame.display.set_mode((int(window_size.x), int(window_size.y)))
-        pygame.display.set_caption("Discover Python & Patterns")
+        pygame.display.set_caption("Ye Olde Tank Game")
         pygame.display.set_icon(pygame.image.load("icon.png"))
 
         self.move_tank_command = Vector2(0,0)
@@ -29,6 +30,18 @@ class UserInterface():
         self.clock = pygame.time.Clock()
 
         self.running = True
+
+
+    @property
+    def cell_width(self):
+
+        return int(self.cell_size.x)
+    
+
+    @property
+    def cell_height(self):
+
+        return int(self.cell_size.y)
 
 
     def process_input(self):
@@ -73,6 +86,18 @@ class UserInterface():
         self.game_state.update(self.move_tank_command)
 
 
+    def render_ground(self, position, tile):
+        """Draw the background using 2D array"""
+
+        sprite_point = position.elementwise() * self.cell_size
+
+        texture_point = tile.elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            self.cell_width, self.cell_height)
+        
+        self.window.blit(self.ground_texture, sprite_point, texture_rect)
+
+
     def render_unit(self, unit):
         """Handles the rendering of units."""
 
@@ -81,7 +106,14 @@ class UserInterface():
         # Unit Texture
         texture_point = unit.tile.elementwise() * self.cell_size
         texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
-                            int(self.cell_size.x), int(self.cell_size.y))
+                            self.cell_width, self.cell_height)
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
+        # Weapon Texture
+        texture_point = Vector2(0,6).elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            self.cell_width, self.cell_height)
         
         self.window.blit(self.units_texture, sprite_point, texture_rect)
 
@@ -90,6 +122,11 @@ class UserInterface():
         """Displays current game state"""
 
         self.window.fill((0,0,0))
+
+        # Ground
+        for y in range(self.game_state.world_height):
+            for x in range(self.game_state.world_width):
+                self.render_ground(Vector2(x,y), self.game_state.ground[y][x])
 
         for unit in self.game_state.units:
 
