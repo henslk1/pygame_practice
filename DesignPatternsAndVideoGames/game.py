@@ -114,6 +114,21 @@ class UserInterface():
         
         self.window.blit(self.units_texture, sprite_point, texture_rect)
 
+        #tower 2
+        sprite_point = self.game_state.tower2_pos.elementwise() * self.cell_size
+        texture_point = Vector2(0,1).elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            int(self.cell_size.x), int(self.cell_size.y))
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
+        texture_point = Vector2(0,6).elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            int(self.cell_size.x), int(self.cell_size.y))
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
+
         #tank base
         sprite_point = self.game_state.tank_pos.elementwise() * self.cell_size
 
