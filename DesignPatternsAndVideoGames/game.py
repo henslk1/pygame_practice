@@ -73,36 +73,27 @@ class UserInterface():
         self.game_state.update(self.move_tank_command)
 
 
+    def render_unit(self, unit):
+        """Handles the rendering of units."""
+
+        sprite_point = unit.position.elementwise() * self.cell_size
+
+        # Unit Texture
+        texture_point = unit.tile.elementwise() * self.cell_size
+        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
+                            int(self.cell_size.x), int(self.cell_size.y))
+        
+        self.window.blit(self.units_texture, sprite_point, texture_rect)
+
+
     def render(self):
         """Displays current game state"""
 
         self.window.fill((0,0,0))
 
-        #tower 1
-        for position in self.game_state.towers_pos:
+        for unit in self.game_state.units:
 
-            sprite_point = position.elementwise() * self.cell_size
-
-            texture_point = Vector2(0,1).elementwise() * self.cell_size
-            texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
-                                int(self.cell_size.x), int(self.cell_size.y))
-            
-            self.window.blit(self.units_texture, sprite_point, texture_rect)
-
-            texture_point = Vector2(0,6).elementwise() * self.cell_size
-            texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
-                                int(self.cell_size.x), int(self.cell_size.y))
-            
-            self.window.blit(self.units_texture, sprite_point, texture_rect)
-
-        #tank base
-        sprite_point = self.game_state.tank_pos.elementwise() * self.cell_size
-
-        texture_point = Vector2(1,0).elementwise() * self.cell_size
-        texture_rect = Rect(int(texture_point.x), int(texture_point.y), 
-                            int(self.cell_size.x),int(self.cell_size.y))
-        
-        self.window.blit(self.units_texture, sprite_point, texture_rect)
+            self.render_unit(unit)
 
         pygame.display.update()
 
